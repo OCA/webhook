@@ -1,0 +1,91 @@
+# -*- coding: utf-8 -*-
+# Copyright 2017 LasLabs Inc.
+# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+
+import logging
+
+from odoo import api, fields, models
+
+_logger = logging.getLogger(__name__)
+
+try:
+    from slugify import slugify
+except ImportError:
+    _logger.info('`python-slugify` Python library not installed.')
+
+
+class WebHook(models.Model):
+
+    _name = 'web.hook'
+    _description = 'Web Hook'
+
+    name = fields.Char(
+        required=True,
+    )
+    interface = fields.Reference(
+        selection='_get_interface_types',
+        readonly=True,
+        help='This is the interface that the web hook represents. It is '
+             'created automatically upon creation of the web hook, and '
+             'is also deleted with it.',
+    )
+    interface_type = fields.Selection(
+        selection='_get_interface_types',
+        required=True,
+    )
+    uri = fields.Char(
+        help='This is the URI that is used to call the web hook externally.',
+        compute='_compute_uri',
+    )
+
+    @api.model
+    def _get_interface_types(self):
+        """Return the web hook interface models that are installed."""
+        adapter = self.env['web.hook.adapter']
+        return [
+            (m, self.env[m]._description) for m in adapter._inherit_children
+        ]
+
+    @api.multi
+    @api.depends('slug')
+    def _compute_uri(self):
+        for record in self:
+            if isinstance(record.id, models.NewId):
+                # Do not compute slug until saved
+                continue
+            name = slugify(record.name or '').strip().strip('-')
+            record.uri = '/base_web_hook/%s-%d' % (name, record.id)
+
+    @api.model
+    def create(self, vals):
+        """Create the interface for the record and assign to ``interface``."""
+        record = super(WebHook, self).create(vals)
+        interface = self.env[vals['interface_type']].create({
+            'hook_id': record.id,
+        })
+        record.interface = interface
+        return record
+
+    @api.model
+    def search_by_slug(self, slug):
+        _, record_id = slug.strip().rsplit('-', 1)
+        return self.browse(record_id)
+
+    @api.multi
+    def receive(self, data=None):
+        """This method is used to receive a web hook.
+
+        It simply passes the received data to the underlying interface's
+        ``receive`` method for processing, and returns the result. The
+        result returned by the interface must be JSON serializable.
+
+        Args:
+            data (dict, optional): Data to pass to the hook's ``receive``
+                method.
+
+        Returns:
+            mixed: A JSON serializable return from the interface's
+                ``receive`` method.
+        """
+        self.ensure_one()
+        return self.interface.receive()
