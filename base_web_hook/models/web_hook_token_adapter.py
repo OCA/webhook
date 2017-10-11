@@ -10,6 +10,7 @@ class WebHookTokenAdapter(models.AbstractModel):
 
     _name = 'web.hook.token.adapter'
     _description = 'Web Hook Token Adapter'
+    _inherits = {'web.hook.token': 'token_id'}
 
     token_id = fields.Many2one(
         string='Token',

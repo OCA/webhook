@@ -10,6 +10,7 @@ class WebHookAdapter(models.AbstractModel):
 
     _name = 'web.hook.adapter'
     _description = 'Web Hook Adapter'
+    _inherits = {'web.hook': 'hook_id'}
 
     hook_id = fields.Many2one(
         string='Hook',
@@ -19,14 +20,14 @@ class WebHookAdapter(models.AbstractModel):
     )
 
     @api.multi
-    def receive(self, data=None):
+    def receive(self, data):
         """This should be overridden by inherited models to receive web hooks.
 
         It can expect a singleton, although can ``self.ensure_one()`` if
         desired.
 
         Args:
-            data (dict, optional): Data that was received with the hook.
+            data (dict): Data that was received with the hook.
 
         Returns:
             mixed: A JSON serializable return, or ``None``.
@@ -34,11 +35,12 @@ class WebHookAdapter(models.AbstractModel):
         raise NotImplementedError()
 
     @api.multi
-    def extract_token(self, data=None):
+    def extract_token(self, data, headers):
         """Extract the token from the data and return it.
 
         Args:
-            data (dict, optional): Data that was received with the hook.
+            data (dict): Data that was received with the hook.
+            headers (dict): Headers that were received with the request.
 
         Returns:
             mixed: The token data. Should be compatible with the hook's token

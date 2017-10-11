@@ -99,11 +99,23 @@ class WebHook(models.Model):
             mixed: A JSON serializable return from the interface's
                 ``receive`` method.
         """
+
         self.ensure_one()
-        token = self.interface.extract_token(data)
+
+        # Convert optional args to proper types for interfaces
+        if data is None:
+            data = {}
+        if data_string is None:
+            data_string = ''
+        if headers is None:
+            headers = {}
+
+        token = self.interface.extract_token(data, headers)
+
         if not self.token_id.validate(token, data, data_string, headers):
             raise Unauthorized(_(
                 'The request could not be processed: '
                 'An invalid token was received.'
             ))
+
         return self.interface.receive(data)
