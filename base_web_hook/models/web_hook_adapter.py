@@ -20,7 +20,7 @@ class WebHookAdapter(models.AbstractModel):
     )
 
     @api.multi
-    def receive(self, data):
+    def receive(self, data, headers):
         """This should be overridden by inherited models to receive web hooks.
 
         It can expect a singleton, although can ``self.ensure_one()`` if
@@ -28,6 +28,7 @@ class WebHookAdapter(models.AbstractModel):
 
         Args:
             data (dict): Data that was received with the hook.
+            headers (dict): Headers that were received with the request.
 
         Returns:
             mixed: A JSON serializable return, or ``None``.

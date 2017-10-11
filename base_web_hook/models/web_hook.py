@@ -118,4 +118,4 @@ class WebHook(models.Model):
                 'An invalid token was received.'
             ))
 
-        return self.interface.receive(data)
+        return self.interface.receive(data, headers)
