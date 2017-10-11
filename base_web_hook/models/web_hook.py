@@ -78,7 +78,7 @@ class WebHook(models.Model):
         return self.browse(record_id)
 
     @api.multi
-    def receive(self, data=None, data_string=None):
+    def receive(self, data=None, data_string=None, headers=None):
         """This method is used to receive a web hook.
 
         First it extracts the token, then validates using ``token.validate``
@@ -92,6 +92,8 @@ class WebHook(models.Model):
                 request.
             data_string (str, optional): The raw data that was received in the
                 request body.
+            headers (dict, optional): Dictionary of headers that were
+                received with the request.
 
         Returns:
             mixed: A JSON serializable return from the interface's
@@ -99,7 +101,7 @@ class WebHook(models.Model):
         """
         self.ensure_one()
         token = self.interface.extract_token(data)
-        if not self.token_id.validate(token, data, data_string):
+        if not self.token_id.validate(token, data, data_string, headers):
             raise Unauthorized(_(
                 'The request could not be processed: '
                 'An invalid token was received.'

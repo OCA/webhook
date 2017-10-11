@@ -59,7 +59,7 @@ class WebHookToken(models.Model):
         )
 
     @api.multi
-    def validate(self, token, data=None, data_string=None):
+    def validate(self, token, data=None, data_string=None, headers=None):
         """This method is used to validate a web hook.
 
         It simply passes the received data to the underlying token's
@@ -74,9 +74,17 @@ class WebHookToken(models.Model):
                 the request. This is useful for computation of hashes, because
                 Python dictionaries do not maintain sort order and thus are
                 useless for crypto.
+            headers (dict, optional): Dictionary of headers that were
+                received with the request.
 
         Returns:
             bool: If the token is valid or not.
         """
         self.ensure_one()
-        return self.token.validate(token, data, data_string)
+        if data is None:
+            data = {}
+        if data_string is None:
+            data_string = ''
+        if headers is None:
+            headers = {}
+        return self.token.validate(token, data, data_string, headers)

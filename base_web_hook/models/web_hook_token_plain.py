@@ -13,7 +13,7 @@ class WebHookTokenPlain(models.Model):
     _description = 'Web Hook Token - Plain'
 
     @api.multi
-    def validate(self, token_string, _, _):
+    def validate(self, token_string, *_, **__):
         """Return ``True`` if the received token is the same as configured.
         """
         return token_string == self.token_id.secret
