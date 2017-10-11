@@ -3,6 +3,8 @@
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 
 import logging
+import random
+import string
 
 from werkzeug.exceptions import Unauthorized
 
@@ -43,6 +45,23 @@ class WebHook(models.Model):
         string='Token',
         comodel_name='web.hook.token',
     )
+    token_type = fields.Selection(
+        selection=lambda s: s._get_token_types(),
+        required=True,
+    )
+    token_secret = fields.Char(
+        help='This is the secret that is configured for the token exchange. '
+             'This configuration is typically performed when setting the '
+             'token up in the remote system. For ease, a secure random value '
+             'has been provided as a default.',
+        default=lambda s: s._default_secret(),
+    )
+    company_id = fields.Many2one(
+        string='Company',
+        comodel_name='res.company',
+        required=True,
+        default=lambda s: s.env.user.company_id.id,
+    )
 
     @api.model
     def _get_interface_types(self):
@@ -53,7 +72,7 @@ class WebHook(models.Model):
         ]
 
     @api.multi
-    @api.depends('slug')
+    @api.depends('name')
     def _compute_uri(self):
         for record in self:
             if isinstance(record.id, models.NewId):
@@ -61,6 +80,21 @@ class WebHook(models.Model):
                 continue
             name = slugify(record.name or '').strip().strip('-')
             record.uri = '/base_web_hook/%s-%d' % (name, record.id)
+
+    @api.model
+    def _get_token_types(self):
+        """Return the web hook token interface models that are installed."""
+        adapter = self.env['web.hook.token.adapter']
+        return [
+            (m, self.env[m]._description) for m in adapter._inherit_children
+        ]
+
+    @api.model
+    def _default_secret(self, length=254):
+        characters = string.printable.split()[0]
+        return ''.join(
+            random.choice(characters) for _ in range(length)
+        )
 
     @api.model
     def create(self, vals):

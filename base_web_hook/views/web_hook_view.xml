@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2017 LasLabs Inc.
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+
+    <record id="web_hook_form" model="ir.ui.view">
+        <field name="name">web.hook.form</field>
+        <field name="model">web.hook</field>
+        <field name="arch" type="xml">
+            <form string="Web Hook">
+
+                <header />
+
+                <sheet>
+                    <group name="group_main">
+                        <field name="name" />
+                        <field name="interface_type" />
+                        <field name="token_type" />
+                        <field name="token_secret" />
+                        <field name="company_id" />
+                        <field name="uri" />
+                    </group>
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="web_hook_tree" model="ir.ui.view">
+        <field name="name">web.hook.tree</field>
+        <field name="model">web.hook</field>
+        <field name="arch" type="xml">
+            <tree string="Web Hooks">
+                <field name="name" />
+                <field name="interface_type" />
+                <field name="uri" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="web_hook_action" model="ir.actions.act_window">
+        <field name="name">Web Hooks</field>
+        <field name="res_model">web.hook</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_web_hook"
+             name="Web Hooks"
+             parent="base.menu_custom"
+             action="web_hook_action"
+             sequence="50" />
+
+</odoo>

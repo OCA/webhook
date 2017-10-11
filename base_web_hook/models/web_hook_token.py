@@ -2,9 +2,6 @@
 # Copyright 2017 LasLabs Inc.
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 
-import random
-import string
-
 from odoo import api, fields, models
 
 
@@ -32,31 +29,11 @@ class WebHookToken(models.Model):
              'is also deleted with it.',
     )
     token_type = fields.Selection(
-        selection='_get_token_types',
-        required=True,
+       related='hook_id.token_type',
     )
     secret = fields.Char(
-        help='This is the secret that is configured for the token exchange. '
-             'This configuration is typically performed when setting the '
-             'token up in the remote system. For ease, a secure random value '
-             'has been provided as a default.',
-        default=lambda s: s._default_secret(),
+       related='hook_id.token_secret',
     )
-
-    @api.model
-    def _get_token_types(self):
-        """Return the web hook token interface models that are installed."""
-        adapter = self.env['web.hook.token.adapter']
-        return [
-            (m, self.env[m]._description) for m in adapter._inherit_children
-        ]
-
-    @api.model
-    def _default_secret(self, length=254):
-        characters = string.printable.split()[0]
-        return ''.join(
-            random.choice(characters) for _ in range(length)
-        )
 
     @api.multi
     def validate(self, token, data, data_string, headers):

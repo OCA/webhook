@@ -18,4 +18,7 @@
     'depends': [
         'base_json_request',
     ],
+    'data': [
+        'views/web_hook_view.xml',
+    ],
 }
