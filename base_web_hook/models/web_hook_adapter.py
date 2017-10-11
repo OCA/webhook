@@ -32,3 +32,16 @@ class WebHookAdapter(models.AbstractModel):
             mixed: A JSON serializable return, or ``None``.
         """
         raise NotImplementedError()
+
+    @api.multi
+    def extract_token(self, data=None):
+        """Extract the token from the data and return it.
+
+        Args:
+            data (dict, optional): Data that was received with the hook.
+
+        Returns:
+            mixed: The token data. Should be compatible with the hook's token
+                interface (the ``token`` parameter of ``token_id.validate``).
+        """
+        raise NotImplementedError()

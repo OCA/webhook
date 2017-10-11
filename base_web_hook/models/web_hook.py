@@ -4,7 +4,9 @@
 
 import logging
 
-from odoo import api, fields, models
+from werkzeug.exceptions import Unauthorized
+
+from odoo import api, fields, models, _
 
 _logger = logging.getLogger(__name__)
 
@@ -36,6 +38,10 @@ class WebHook(models.Model):
     uri = fields.Char(
         help='This is the URI that is used to call the web hook externally.',
         compute='_compute_uri',
+    )
+    token_id = fields.Many2one(
+        string='Token',
+        comodel_name='web.hook.token',
     )
 
     @api.model
@@ -72,20 +78,30 @@ class WebHook(models.Model):
         return self.browse(record_id)
 
     @api.multi
-    def receive(self, data=None):
+    def receive(self, data=None, data_string=None):
         """This method is used to receive a web hook.
 
-        It simply passes the received data to the underlying interface's
-        ``receive`` method for processing, and returns the result. The
-        result returned by the interface must be JSON serializable.
+        First it extracts the token, then validates using ``token.validate``
+        and raises as ``Unauthorized`` if it is invalid. It then passes the
+        received data to the underlying interface's ``receive`` method for
+        processing, and returns the result. The result returned by the
+        interface must be JSON serializable.
 
         Args:
-            data (dict, optional): Data to pass to the hook's ``receive``
-                method.
+            data (dict, optional): Parsed data that was received in the
+                request.
+            data_string (str, optional): The raw data that was received in the
+                request body.
 
         Returns:
             mixed: A JSON serializable return from the interface's
                 ``receive`` method.
         """
         self.ensure_one()
-        return self.interface.receive()
+        token = self.interface.extract_token(data)
+        if not self.token_id.validate(token, data, data_string):
+            raise Unauthorized(_(
+                'The request could not be processed: '
+                'An invalid token was received.'
+            ))
+        return self.interface.receive(data)

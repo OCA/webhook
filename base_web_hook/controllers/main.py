@@ -14,4 +14,4 @@ class WebHookController(http.Controller):
     )
     def receive(self, slug, **kwargs):
         hook = self.env['web.hook'].search_by_slug(slug)
-        return hook.receive(kwargs)
+        return hook.receive(kwargs, http.request.httprequest.get_data())
