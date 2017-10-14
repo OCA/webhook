@@ -37,6 +37,12 @@ class WebHook(models.Model):
         selection='_get_interface_types',
         required=True,
     )
+    uri_path = fields.Char(
+        help='This is the URI path that is used to call the web hook.',
+        compute='_compute_uri_path',
+        store=True,
+        readonly=True,
+    )
     uri = fields.Char(
         help='This is the URI that is used to call the web hook externally.',
         compute='_compute_uri',
@@ -73,13 +79,20 @@ class WebHook(models.Model):
 
     @api.multi
     @api.depends('name')
-    def _compute_uri(self):
+    def _compute_uri_path(self):
         for record in self:
             if isinstance(record.id, models.NewId):
                 # Do not compute slug until saved
                 continue
             name = slugify(record.name or '').strip().strip('-')
-            record.uri = '/base_web_hook/%s-%d' % (name, record.id)
+            record.uri_path = '/base_web_hook/%s-%d' % (name, record.id)
+
+    @api.multi
+    @api.depends('uri_path')
+    def _compute_uri(self):
+        base_uri = self.env['ir.config_parameter'].get_param('web.base.url')
+        for record in self.filtered(lambda r: r.uri_path):
+            record.uri = '%s%s' % (base_uri, record.uri_path)
 
     @api.model
     def _get_token_types(self):
