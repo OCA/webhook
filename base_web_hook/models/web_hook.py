@@ -113,10 +113,11 @@ class WebHook(models.Model):
     def create(self, vals):
         """Create the interface for the record and assign to ``interface``."""
         record = super(WebHook, self).create(vals)
-        interface = self.env[vals['interface_type']].create({
-            'hook_id': record.id,
-        })
-        record.interface = interface
+        if not self._context.get('web_hook_no_interface'):
+            interface = self.env[vals['interface_type']].create({
+                'hook_id': record.id,
+            })
+            record.interface = interface
         return record
 
     @api.model
