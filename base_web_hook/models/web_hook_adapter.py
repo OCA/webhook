@@ -23,6 +23,8 @@ class WebHookAdapter(models.AbstractModel):
     def receive(self, data, headers):
         """This should be overridden by inherited models to receive web hooks.
 
+        The data has already been authenticated at this point in the workflow.
+
         It can expect a singleton, although can ``self.ensure_one()`` if
         desired.
 
