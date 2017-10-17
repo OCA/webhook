@@ -8,11 +8,22 @@ from odoo import http
 class WebHookController(http.Controller):
 
     @http.route(
-        ['/base_web_hook/<string:slug>'],
+        ['/base_web_hook/json/<string:slug>.json'],
         type='json',
         auth='none',
     )
-    def receive(self, slug, **kwargs):
+    def json_receive(self, *args, **kwargs):
+        return self._receive(*args, **kwargs)
+
+    @http.route(
+        ['/base_web_hook/<string:slug>'],
+        type='http',
+        auth='none',
+    )
+    def http_receive(self, *args, **kwargs):
+        return self._receive(*args, **kwargs)
+
+    def _receive(self, slug, **kwargs):
         hook = self.env['web.hook'].search_by_slug(slug)
         return hook.receive(
             data=kwargs,

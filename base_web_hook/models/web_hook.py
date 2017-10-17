@@ -37,14 +37,31 @@ class WebHook(models.Model):
         selection='_get_interface_types',
         required=True,
     )
-    uri_path = fields.Char(
-        help='This is the URI path that is used to call the web hook.',
+    uri_path_json = fields.Char(
+        help='This is the URI path that is used to call the web hook with '
+             'a JSON request.',
         compute='_compute_uri_path',
         store=True,
         readonly=True,
     )
-    uri = fields.Char(
-        help='This is the URI that is used to call the web hook externally.',
+    uri_path_http = fields.Char(
+        help='This is the URI path that is used to call the web hook with '
+             'a form encoded request.',
+        compute='_compute_uri_path',
+        store=True,
+        readonly=True,
+    )
+    uri_json = fields.Char(
+        string='JSON Endpoint',
+        help='This is the URI that is used to call the web hook externally. '
+             'This endpoint only accepts requests with a JSON mime-type.',
+        compute='_compute_uri',
+    )
+    uri_http = fields.Char(
+        string='Form-Encoded Endpoint',
+        help='This is the URI that is used to call the web hook externally. '
+             'This endpoint should be used with requests that are form '
+             'encoded, not JSON.',
         compute='_compute_uri',
     )
     token_id = fields.Many2one(
@@ -85,14 +102,18 @@ class WebHook(models.Model):
                 # Do not compute slug until saved
                 continue
             name = slugify(record.name or '').strip().strip('-')
-            record.uri_path = '/base_web_hook/%s-%d' % (name, record.id)
+            record.uri_path_json = '/base_web_hook/%s-%d.json' % (
+                name, record.id,
+            )
+            record.uri_path_http = '/base_web_hook/%s-%d' % (name, record.id)
 
     @api.multi
-    @api.depends('uri_path')
+    @api.depends('uri_path_http', 'uri_path_json')
     def _compute_uri(self):
         base_uri = self.env['ir.config_parameter'].get_param('web.base.url')
         for record in self.filtered(lambda r: r.uri_path):
-            record.uri = '%s%s' % (base_uri, record.uri_path)
+            record.uri_json = '%s%s' % (base_uri, record.uri_path_json)
+            record.uri_http = '%s%s' % (base_uri, record.uri_path_http)
 
     @api.model
     def _get_token_types(self):

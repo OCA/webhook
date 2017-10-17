@@ -19,7 +19,8 @@
                         <field name="token_type" />
                         <field name="token_secret" />
                         <field name="company_id" />
-                        <field name="uri" />
+                        <field name="uri_http" />
+                        <field name="uri_json" />
                     </group>
                 </sheet>
 
@@ -34,7 +35,8 @@
             <tree string="Web Hooks">
                 <field name="name" />
                 <field name="interface_type" />
-                <field name="uri" />
+                <field name="uri_http" />
+                <field name="uri_json" />
             </tree>
         </field>
     </record>
