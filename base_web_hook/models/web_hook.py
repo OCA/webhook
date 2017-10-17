@@ -67,6 +67,7 @@ class WebHook(models.Model):
     token_id = fields.Many2one(
         string='Token',
         comodel_name='web.hook.token',
+        readonly=True,
     )
     token_type = fields.Selection(
         selection=lambda s: s._get_token_types(),
@@ -111,7 +112,7 @@ class WebHook(models.Model):
     @api.depends('uri_path_http', 'uri_path_json')
     def _compute_uri(self):
         base_uri = self.env['ir.config_parameter'].get_param('web.base.url')
-        for record in self.filtered(lambda r: r.uri_path):
+        for record in self.filtered(lambda r: r.uri_path_json):
             record.uri_json = '%s%s' % (base_uri, record.uri_path_json)
             record.uri_http = '%s%s' % (base_uri, record.uri_path_http)
 
@@ -132,19 +133,24 @@ class WebHook(models.Model):
 
     @api.model
     def create(self, vals):
-        """Create the interface for the record and assign to ``interface``."""
+        """Create the interface and token."""
         record = super(WebHook, self).create(vals)
         if not self._context.get('web_hook_no_interface'):
-            interface = self.env[vals['interface_type']].create({
+            record.interface = self.env[vals['interface_type']].create({
                 'hook_id': record.id,
             })
-            record.interface = interface
+        token = self.env['web.hook.token'].create({
+            'hook_id': record.id,
+            'token_type': record.token_type,
+            'secret': record.token_secret,
+        })
+        record.token_id = token.id
         return record
 
     @api.model
     def search_by_slug(self, slug):
         _, record_id = slug.strip().rsplit('-', 1)
-        return self.browse(record_id)
+        return self.browse(int(record_id))
 
     @api.multi
     def receive(self, data=None, data_string=None, headers=None):

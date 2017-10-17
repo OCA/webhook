@@ -35,7 +35,7 @@ class WebHookRequestBin(models.Model):
             'bin_id': self.id,
             'uri': request.httprequest.url,
             'method': request.httprequest.method,
-            'headers': headers,
+            'headers': dict(headers),
             'data': data,
             'cookies': request.httprequest.cookies,
         })

@@ -22,7 +22,7 @@ class WebHookToken(models.Model):
         ondelete='cascade',
     )
     token = fields.Reference(
-        selection='_get_token_types',
+        selection=lambda s: s.env['web.hook']._get_token_types(),
         readonly=True,
         help='This is the token used for hook authentication. It is '
              'created automatically upon creation of the web hook, and '
@@ -34,6 +34,16 @@ class WebHookToken(models.Model):
     secret = fields.Char(
        related='hook_id.token_secret',
     )
+
+    @api.model
+    def create(self, vals):
+        """Create the token."""
+        record = super(WebHookToken, self).create(vals)
+        if not self._context.get('web_hook_no_token'):
+            record.token = self.env[vals['token_type']].create({
+                'token_id': record.id,
+            })
+        return record
 
     @api.multi
     def validate(self, token, data, data_string, headers):
