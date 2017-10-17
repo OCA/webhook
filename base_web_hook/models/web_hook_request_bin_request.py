@@ -22,3 +22,8 @@ class WebHookRequestBinRequest(models.Model):
     headers = fields.Serialized()
     data = fields.Serialized()
     cookies = fields.Serialized()
+    user_id = fields.Many2one(
+        string='User',
+        comodel_name='res.users',
+        default=lambda s: s.env.user.id,
+    )
