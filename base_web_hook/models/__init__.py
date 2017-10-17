@@ -6,3 +6,4 @@ from . import web_hook_adapter
 from . import web_hook_token
 from . import web_hook_token_adapter
 from . import web_hook_token_plain
+from . import web_hook_token_user

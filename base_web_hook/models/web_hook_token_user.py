@@ -5,15 +5,15 @@
 from odoo import api, models
 
 
-class WebHookTokenUser(models.Model):
-    """This is a token that requires a valid user session."""
+class WebHookTokenPlain(models.Model):
+    """This is a plain text token."""
 
-    _name = 'web.hook.token.user'
+    _name = 'web.hook.token.plain'
     _inherit = 'web.hook.token.adapter'
-    _description = 'Web Hook Token - User Session'
+    _description = 'Web Hook Token - Plain'
 
     @api.multi
-    def validate(self, *_, **__):
+    def validate(self, token_string, *_, **__):
         """Return ``True`` if the received token is the same as configured.
         """
-        return bool(self.env.user)
+        return token_string == self.token_id.secret

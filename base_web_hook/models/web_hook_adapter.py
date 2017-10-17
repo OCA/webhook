@@ -19,6 +19,17 @@ class WebHookAdapter(models.AbstractModel):
         ondelete='cascade',
     )
 
+    @api.model
+    def create(self, vals):
+        """If creating from the adapter level, circumvent adapter creation.
+
+        An adapter is implicitly created and managed from within the
+        ``web.hook`` model. This is desirable in most instances, but it should
+        also be possible to create an adapter directly.
+        """
+        context_self = self.with_context(web_hook_no_interface=True)
+        return super(WebHookAdapter, context_self).create(vals)
+
     @api.multi
     def receive(self, data, headers):
         """This should be overridden by inherited models to receive web hooks.
