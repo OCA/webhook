@@ -19,6 +19,7 @@
                         <field name="token_type" />
                         <field name="token_secret" />
                         <field name="company_id" />
+                        <field name="interface" />
                         <field name="uri_http" />
                         <field name="uri_json" />
                     </group>

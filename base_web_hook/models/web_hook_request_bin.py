@@ -2,6 +2,8 @@
 # Copyright 2017 LasLabs Inc.
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 
+import pprint
+
 from odoo import api, fields, models
 from odoo.http import request
 
@@ -35,9 +37,11 @@ class WebHookRequestBin(models.Model):
             'bin_id': self.id,
             'uri': request.httprequest.url,
             'method': request.httprequest.method,
-            'headers': dict(headers),
-            'data': data,
-            'cookies': request.httprequest.cookies,
+            'headers': pprint.pformat(dict(headers), indent=4),
+            'data_parsed': pprint.pformat(data, indent=4),
+            'data_raw': request.httprequest.get_data(),
+            'cookies': pprint.pformat(request.httprequest.cookies,
+                                      indent=4),
         })
 
     @api.multi

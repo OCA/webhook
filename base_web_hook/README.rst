@@ -16,6 +16,7 @@ Known Issues
 ============
 
 * Security is too lax; public can read too much
+* Buffer length should be checked before ``httprequest.get_data`` calls
 
 Bug Tracker
 ===========

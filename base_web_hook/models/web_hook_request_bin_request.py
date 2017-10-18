@@ -16,14 +16,29 @@ class WebHookRequestBinRequest(models.Model):
         comodel_name='web.hook.request.bin',
         required=True,
         ondelete='cascade',
+        readonly=True,
     )
-    uri = fields.Char()
-    method = fields.Char()
-    headers = fields.Serialized()
-    data = fields.Serialized()
-    cookies = fields.Serialized()
+    uri = fields.Char(
+        readonly=True,
+    )
+    method = fields.Char(
+        readonly=True,
+    )
+    headers = fields.Text(
+        readonly=True,
+    )
+    data_parsed = fields.Text(
+        readonly=True,
+    )
+    data_raw = fields.Text(
+        readonly=True,
+    )
+    cookies = fields.Text(
+        readonly=True,
+    )
     user_id = fields.Many2one(
         string='User',
         comodel_name='res.users',
         default=lambda s: s.env.user.id,
+        readonly=True,
     )
