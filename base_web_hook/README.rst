@@ -12,6 +12,11 @@ This module provides an abstract core for receiving and processing web hooks.
    :alt: Try me on Runbot
    :target: https://runbot.odoo-community.org/runbot/210/10.0
 
+Known Issues
+============
+
+* Security is too lax; public can read too much
+
 Bug Tracker
 ===========
 

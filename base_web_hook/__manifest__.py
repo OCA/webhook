@@ -19,6 +19,7 @@
         'base_json_request',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/web_hook_view.xml',
     ],
 }

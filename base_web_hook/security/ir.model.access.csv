@@ -1,0 +1,12 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+access_web_hook_system,access_web_hook_system,model_web_hook,base.group_system,1,1,1,1
+access_web_hook_request_bin_system,access_web_hook_request_bin_system,model_web_hook_request_bin,base.group_system,1,1,1,1
+access_web_hook_request_bin_request_system,access_web_hook_request_bin_request_system,model_web_hook_request_bin_request,base.group_system,1,1,1,1
+access_web_hook_token_system,access_web_hook_token_system,model_web_hook_token,base.group_system,1,1,1,1
+access_web_hook_token_none_system,access_web_hook_token_none_system,model_web_hook_token_none,base.group_system,1,1,1,1
+access_web_hook_token_plain_system,access_web_hook_token_plain_system,model_web_hook_token_plain,base.group_system,1,1,1,1
+access_web_hook_token_user_system,access_web_hook_token_user_system,model_web_hook_token_user,base.group_system,1,1,1,1
+
+access_web_hook_public,access_web_hook_public,model_web_hook,base.group_public,1,0,0,0
+access_web_hook_token_public,access_web_hook_token_public,model_web_hook_token,base.group_public,1,0,0,0
+access_web_hook_request_bin_request_public,access_web_hook_request_bin_request_public,model_web_hook_request_bin_request,base.group_public,0,0,1,0

@@ -21,6 +21,7 @@ class WebHookController(http.Controller):
         ['/base_web_hook/<string:slug>'],
         type='http',
         auth='public',
+        csrf=False,
     )
     def http_receive(self, *args, **kwargs):
         return json.dumps(
