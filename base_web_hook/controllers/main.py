@@ -28,6 +28,15 @@ class WebHookController(http.Controller):
             self._receive(*args, **kwargs),
         )
 
+    @http.route(
+        ['/base_web_hook/authenticated/<string:slug>'],
+        type='http',
+        auth='user',
+        csrf=False,
+    )
+    def http_receive_authenticated(self, *args, **kwargs):
+        return self.http_receive(*args, **kwargs)
+
     def _receive(self, slug, **kwargs):
         hook = http.request.env['web.hook'].search_by_slug(slug)
         return hook.receive(
