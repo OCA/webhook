@@ -118,7 +118,7 @@ class WebHook(models.Model):
                 # Do not compute slug until saved
                 continue
             name = slugify(record.name or '').strip().strip('-')
-            slug = '%s-%d' % (name.record.id)
+            slug = '%s-%d' % (name, record.id)
             record.uri_path_json = '/base_web_hook/%s.json' % slug
             record.uri_path_http = '/base_web_hook/%s' % slug
             authenticated = '/base_web_hook/authenticated/%s' % slug
