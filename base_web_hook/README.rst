@@ -15,7 +15,7 @@ This module provides an abstract core for receiving and processing web hooks.
 Known Issues
 ============
 
-* Security is too lax; public can read too much
+* Security is too lax; public can read too much. Maybe should also add a group for hooks..
 * Buffer length should be checked before ``httprequest.get_data`` calls
 
 Bug Tracker

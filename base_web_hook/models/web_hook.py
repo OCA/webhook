@@ -83,6 +83,7 @@ class WebHook(models.Model):
         string='Token',
         comodel_name='web.hook.token',
         readonly=True,
+        groups='base.group_system',
     )
     token_type = fields.Selection(
         selection=lambda s: s._get_token_types(),
@@ -94,6 +95,7 @@ class WebHook(models.Model):
              'token up in the remote system. For ease, a secure random value '
              'has been provided as a default.',
         default=lambda s: s._default_secret(),
+        groups='base.group_system',
     )
     company_id = fields.Many2one(
         string='Company',
@@ -204,7 +206,7 @@ class WebHook(models.Model):
         if headers is None:
             headers = {}
 
-        token = self.interface.extract_token(data, headers)
+        token = self.interface.sudo().extract_token(data, headers)
 
         if not self.token_id.validate(token, data, data_string, headers):
             raise Unauthorized(_(
