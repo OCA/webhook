@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="webhook_incoming_view_automation_form" model="ir.ui.view">
+        <field name="name">webhook.incoming.view.automation.form</field>
+        <field name="model">base.automation</field>
+        <field name="inherit_id" ref="base_automation.view_base_automation_form" />
+        <field name="arch" type="xml">
+            <field name="trigger" position="after">
+                <field
+                    name="webhook_uuid"
+                    invisible="1"
+                    attrs="{'invisible': [('trigger', '!=', 'on_webhook')]}"
+                />
+                <field
+                    name="url"
+                    widget="CopyClipboardChar"
+                    attrs="{'invisible': [('trigger', '!=', 'on_webhook')]}"
+                />
+            </field>
+            <field name="state" position="after">
+                <field
+                    name="record_getter"
+                    attrs="{'invisible': [('trigger', '!=', 'on_webhook')]}"
+                />
+                <field
+                    name="allow_creation"
+                    attrs="{'invisible': [('trigger', '!=', 'on_webhook')]}"
+                />
+                <field
+                    name="log_webhook_calls"
+                    attrs="{'invisible': [('trigger', '!=', 'on_webhook')]}"
+                />
+                <field name="delay_execution" widget="boolean_toggle" />
+            </field>
+            <xpath expr="//page[@name='code']" position="before">
+                <page
+                    string="Record Creation Code"
+                    attrs="{'invisible': [('trigger', '!=', 'on_webhook')]}"
+                >
+                    <field
+                        name="create_record_code"
+                        nolabel="1"
+                        widget="ace"
+                        options="{'mode': 'python'}"
+                    />
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
