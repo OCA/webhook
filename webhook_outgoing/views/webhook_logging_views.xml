@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="webhook_logging_view_form" model="ir.ui.view">
+        <field name="name">webhook.logging.view.form</field>
+        <field name="model">webhook.logging</field>
+        <field name="arch" type="xml">
+            <form string="Webhook Logging" create="0" edit="0">
+                <header>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="webhook_type" />
+                        <field name="webhook" />
+                        <field name="endpoint" />
+                        <field name="headers" />
+                        <field name="status" />
+                        <field name="body" />
+                        <field name="response" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="webhook_logging_view_tree" model="ir.ui.view">
+        <field name="name">webhook.logging.view.tree</field>
+        <field name="model">webhook.logging</field>
+        <field name="arch" type="xml">
+            <tree create="0" edit="0">
+                <field name="name" />
+                <field name="webhook_type" />
+                <field name="webhook" />
+                <field name="endpoint" />
+                <field name="status" />
+                <field name="create_date" />
+            </tree>
+        </field>
+    </record>
+    <record id="webhook_logging_action" model="ir.actions.act_window">
+        <field name="name">Webhook Loggings</field>
+        <field name="res_model">webhook.logging</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+</odoo>

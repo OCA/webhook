@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="inherited_server_action_custom_webhook_form" model="ir.ui.view">
+        <field name="name">inherited.server.action.custom.webhook.form</field>
+        <field name="model">ir.actions.server</field>
+        <field name="inherit_id" ref="base.view_server_action_form" />
+        <field name="arch" type="xml">
+            <group name="action_content" position="inside">
+
+                <field
+                    name="endpoint"
+                    required="state == 'custom_webhook'"
+                    invisible="state != 'custom_webhook'"
+                />
+                <field name="headers" invisible="state != 'custom_webhook'" />
+                <field
+                    name="request_method"
+                    required="state == 'custom_webhook'"
+                    invisible="state != 'custom_webhook'"
+                />
+                <field
+                    name="request_type"
+                    required="state == 'custom_webhook'"
+                    invisible="state != 'custom_webhook'"
+                />
+                <field name="log_webhook_calls" invisible="state != 'custom_webhook'" />
+                <field name="delay_execution" invisible="state != 'custom_webhook'" />
+                <field name="delay" invisible="state != 'custom_webhook'" />
+
+            </group>
+            <group name="action_wrapper" position="inside">
+                <group invisible="state != 'custom_webhook'">
+                    <label for="body_template" />
+                    <field
+                        string="Body"
+                        name="body_template"
+                        nolabel="1"
+                        colspan="2"
+                        widget="code"
+                        options="{'mode': 'python'}"
+                    />
+                    <span class="text-muted" colspan="2">
+Learn more template syntax at <a
+                            href="https://jinja.palletsprojects.com/en/3.1.x/templates/"
+                            target="_blank"
+                        >Jinja Documentation</a>
+                    </span>
+                </group>
+            </group>
+
+        </field>
+    </record>
+</odoo>

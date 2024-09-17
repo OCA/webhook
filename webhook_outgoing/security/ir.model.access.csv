@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_webhook_logging_base_user,access.webhook.logging.base.user,model_webhook_logging,base.group_system,1,1,1,1

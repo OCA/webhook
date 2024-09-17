@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <menuitem
+        id="webhook_logging_menu"
+        name="Webhook Loggings"
+        action="webhook_logging_action"
+        parent="base.menu_automation"
+        sequence="30"
+    />
+
+</odoo>
