@@ -1,0 +1,2 @@
+odoo-addon-webhook_outgoing @ git+https://github.com/OCA/webhook@refs/pull/15/head#subdirectory=webhook_outgoing
+odoo-addon-queue_job @ git+https://github.com/OCA/queue@17.0#subdirectory=queue_job
